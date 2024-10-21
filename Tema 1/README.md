@@ -15,7 +15,7 @@ Componenta|Cantitate
 LED Albastru|4
 LED RGB|1
 Rezistor 330 $\Omega$|7
-Rezsitor 2k $\Omega$|2
+Rezistor 2k $\Omega$|2
 Push buttons|2
 Breadboard|1
 Arduino UNO|1
