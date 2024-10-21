@@ -92,7 +92,7 @@ void handleReset() {
       isCharging = false;
       chargeLevel = levelTimer = blinkTimer = 0;
       uint8_t blinkCounter = 0;
-      while (blinkCounter++ <= BLINK_ANIMATION_TIMES) {
+      while (blinkCounter++ < BLINK_ANIMATION_TIMES * 2) {
         setAllLEDState(blinkCounter % 2);
         delay(BLINK_INTERVAL);
       }
