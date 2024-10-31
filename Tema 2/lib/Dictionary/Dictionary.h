@@ -33,7 +33,8 @@ const char* dictionary[] = {
     "se intoarce in zero",
     "armin van buuren",
     "layer zero nota zero",
-    "inchideti monitoarele"
+    "inchideti monitoarele",
+    "cand vreodata"
 };
 
 const uint8_t dictionaryCount = sizeof(dictionary) / sizeof(dictionary[0]);
