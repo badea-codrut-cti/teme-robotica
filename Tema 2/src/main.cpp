@@ -9,6 +9,13 @@ volatile uint32_t debounceDifficultyButton = millis(), debounceStartButton = mil
 volatile bool hasGameStarted = false;
 bool isLEDOn = false, lastWordCorrect = true, forceNewWord = false;
 
+// Made this a separate function as the same logic
+// will be used when the timer runs out or inside the interrupt.
+void resetCountersAfterGame() {
+  gameStartMs = lastWordMs = lastCountMs = correctCount = 0;
+  hasGameStarted = false;
+}
+
 // Should only be called in the interrupt. It will change the difficulty setting.
 void handleDifficultyButton() {
   // We should not change difficulty mid-game
@@ -26,8 +33,10 @@ void handleStartButton() {
   if (millis() - debounceStartButton < DEBOUNCE_TIME)
     return;
 
-  gameStartMs = 0;
-  hasGameStarted = !hasGameStarted;
+  if (hasGameStarted)
+    resetCountersAfterGame();
+  else
+    hasGameStarted = true;
   debounceStartButton = millis();
 }
 
@@ -122,11 +131,12 @@ void handleGameWordPrint() {
   if ((lastWordMs != 0 && gameStartMs - lastWordMs < difficultyDelay[difficultyLevel]) && !forceNewWord)
     return;
 
-  //if (lastWordMs != 0 && !forceNewWord)
-    //lastWordCorrect = false;
+  if (lastWordMs != 0 && !forceNewWord)
+    lastWordCorrect = false;
 
   forceNewWord = false;
   wordIndex = random(dictionaryCount);
+  Serial.print("\n");
   Serial.println(dictionary[wordIndex]);
   lastWordMs = gameStartMs;
   lastCorrectIndex = letterIndex = 0;
@@ -138,9 +148,8 @@ void handleGameEnd() {
   
   Serial.print(correctCount, DEC);
   Serial.print(" cuvinte corecte\n");
-  
-  gameStartMs = lastWordMs = lastCountMs = correctCount = 0;
-  hasGameStarted = false;
+
+  resetCountersAfterGame();
 }
 
 void handleWordValidationLED() {
@@ -167,8 +176,10 @@ void handleInput() {
    }
 
   // We can't just backspace one character and keep typing.
-  if (letterIndex && letterIndex - 1 > lastCorrectIndex) 
+  if (letterIndex && letterIndex - 1 > lastCorrectIndex) {
+    letterIndex++;
     return;
+  }
   
   if (dictionary[wordIndex][letterIndex++] != incomingByte) {
     lastWordCorrect = false;
