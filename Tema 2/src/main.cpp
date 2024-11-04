@@ -165,7 +165,7 @@ void handleWordValidationLED() {
 }
 
 void handleInput() {
-  if (!Serial.available()) 
+  if (!Serial.available() || hasGameStarted) 
     return;
 
   int incomingByte = Serial.read();
