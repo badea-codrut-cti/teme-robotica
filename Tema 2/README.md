@@ -24,6 +24,14 @@ Arduino UNO|1
 
 ### Poze ale setup-ului fizic
 
+![image](https://github.com/user-attachments/assets/f8a7f5fc-b8e5-44ba-b2e5-ddbb031e998b)
+![image](https://github.com/user-attachments/assets/036bb419-1f00-4114-a33d-57c4c9daa488)
+
+
 ### Video cu functionalitatea montajului fizic
 
+https://github.com/user-attachments/assets/06faa811-c283-4f5f-b76b-d6d48d0ae573
+
 ### Schema electrica
+
+![image](https://github.com/user-attachments/assets/2e32d4d5-973e-4af3-a941-a0da90ae1a07)
