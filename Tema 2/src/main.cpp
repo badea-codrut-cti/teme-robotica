@@ -62,9 +62,10 @@ void setup() {
   pinMode(START_BTN, INPUT_PULLUP);
   pinMode(DIFFICULTY_BTN, INPUT_PULLUP);
 
+  // Pin 0 is empty, background noise will act as our seed.
   randomSeed(analogRead(0));
 
-  // In repaus LED-ul RGB este alb.
+  // During stand-by, the RGB LED will be white.
   digitalWrite(RED_RGB, HIGH);
   digitalWrite(GREEN_RGB, HIGH);
   digitalWrite(BLUE_RGB, HIGH);
@@ -146,6 +147,8 @@ void handleGameEnd() {
   if (gameStartMs < GAME_LENGTH) 
     return;
   
+  // In case the user is still typing the last word
+  Serial.print("\n");
   Serial.print(correctCount, DEC);
   Serial.print(" cuvinte corecte\n");
 
@@ -166,7 +169,6 @@ void handleInput() {
     return;
 
   int incomingByte = Serial.read();
-
   if (incomingByte == -1)
     return;
 
@@ -177,6 +179,7 @@ void handleInput() {
 
   // We can't just backspace one character and keep typing.
   if (letterIndex && letterIndex - 1 > lastCorrectIndex) {
+    // Won't cause overflows since lastCorrectIndex will always be shorter
     letterIndex++;
     return;
   }
