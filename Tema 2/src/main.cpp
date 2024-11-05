@@ -2,7 +2,7 @@
 #include <Dictionary.h>
 
 volatile uint8_t difficultyLevel = 0;
-uint8_t lastDifficultyLevel = 0, wordIndex = 0, letterIndex = 0, lastCorrectIndex = 0, correctCount = 0;
+uint8_t lastDifficultyLevel = 0, letterIndex = 0, lastCorrectIndex = 0, correctCount = 0;
 volatile uint16_t gameStartMs = 0;
 uint16_t lastBlinkMs = 0, lastCountMs = 0, lastWordMs = 0;
 volatile uint32_t debounceDifficultyButton = millis(), debounceStartButton = millis();
@@ -137,7 +137,7 @@ void handleGameWordPrint() {
     lastWordCorrect = false;
 
   forceNewWord = false;
-  wordIndex = random(dictionaryCount);
+  uint8_t wordIndex = random(dictionaryCount);
   strcpy_P(wordBuffer, (PGM_P) dictionary[wordIndex]);
   Serial.print("\n");
   Serial.println(wordBuffer);
