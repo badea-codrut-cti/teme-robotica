@@ -12,13 +12,15 @@
 
 #define DEBOUNCE_TIME 200U
 
-const char* dictionary[] = {
+#define MAX_DICT_SIZE 28
+
+const char dictionary[][MAX_DICT_SIZE] PROGMEM = {
     "copilu cine esti ma", 
     "zero munca", 
     "alta gasca in alta traista", 
     "switch switch router",  
     "dom student",
-    "ai mari lagune",
+    "ai mari lacune",
     "sterge tot",
     "pasul doi incomplet",
     "pentru ca da",

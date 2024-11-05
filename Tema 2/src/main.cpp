@@ -8,6 +8,7 @@ uint16_t lastBlinkMs = 0, lastCountMs = 0, lastWordMs = 0;
 volatile uint32_t debounceDifficultyButton = millis(), debounceStartButton = millis();
 volatile bool hasGameStarted = false;
 bool isLEDOn = false, lastWordCorrect = true, forceNewWord = false;
+char wordBuffer[MAX_DICT_SIZE];
 
 // Made this a separate function as the same logic
 // will be used when the timer runs out or inside the interrupt.
@@ -137,8 +138,9 @@ void handleGameWordPrint() {
 
   forceNewWord = false;
   wordIndex = random(dictionaryCount);
+  strcpy_P(wordBuffer, (PGM_P) dictionary[wordIndex]);
   Serial.print("\n");
-  Serial.println(dictionary[wordIndex]);
+  Serial.println(wordBuffer);
   lastWordMs = gameStartMs;
   lastCorrectIndex = letterIndex = 0;
 }
@@ -165,7 +167,7 @@ void handleWordValidationLED() {
 }
 
 void handleInput() {
-  if (!Serial.available() || hasGameStarted) 
+  if (!Serial.available() || !hasGameStarted) 
     return;
 
   int incomingByte = Serial.read();
@@ -184,14 +186,14 @@ void handleInput() {
     return;
   }
   
-  if (dictionary[wordIndex][letterIndex++] != incomingByte) {
+  if (wordBuffer[letterIndex++] != incomingByte) {
     lastWordCorrect = false;
     return;
   }
 
   lastCorrectIndex = letterIndex - 1;
 
-  if (dictionary[wordIndex][letterIndex] == '\0') {
+  if (wordBuffer[letterIndex] == '\0') {
     lastWordCorrect = true;
     forceNewWord = true;
     correctCount++;
