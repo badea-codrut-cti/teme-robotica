@@ -12,7 +12,7 @@
 
 #define DEBOUNCE_TIME 200U
 
-#define MAX_DICT_SIZE 28
+#define MAX_DICT_SIZE 30
 
 const char dictionary[][MAX_DICT_SIZE] PROGMEM = {
     "copilu cine esti ma", 
@@ -42,7 +42,7 @@ const char dictionary[][MAX_DICT_SIZE] PROGMEM = {
     "ursuletul din erasmus",
     "crestem in valoare",
     "nu sariti peste fire",
-    "de la ce vine RSA",
+    "de la ce vine rsa",
     "eu nu sunt aici",
     "nu vreau sa vad elefanti",
     "am zis castraveti",
@@ -64,7 +64,43 @@ const char dictionary[][MAX_DICT_SIZE] PROGMEM = {
     "nu ai vlanul null",
     "noi gandim in modele",
     "echipament virtual 5 lei",
-    "echipament real 3000 lei"
+    "echipament real 3000 lei",
+    "eu vorbesc cu frigiderul",
+    "scrie bine colegul tau",
+    "ai pierdut trenul",
+    "intri cu absenta",
+    "asa e in tenis",
+    "scopul si durata",
+    "nu ne intelegem",
+    "cablarea ta e zero",
+    "ai stricat axele",
+    "nu lucra in izometric",
+    "ai permis de conducere",
+    "perpetuezi greseala",
+    "iti lipsesc elemente",
+    "pierdeti din vedere",
+    "va spun doamnei de poo",
+    "stii de la ce vine uso",
+    "lucrezi ca sa lucrezi",
+    "cat casa scanteii",
+    "ce a vrut sa zica colegul",
+    "doi ursuleti care soptesc",
+    "criptat nu e securizat",
+    "lucram pe etape",
+    "te joci acasa",
+    "ai potential dar degeaba", // asta mi-a zis mie la colocviu sem 1
+    "va pistonam din spate", // asta mi-a zis sem 2 la colocviu, "noi" fiind profesorii
+    "mai trebuie un doctorat",
+    "in momentul de fata",
+    "din acest moment",
+    "aplicatia te ajuta",
+    "dlluri de la windows",
+    "switchport edging time",
+    "ai configurat serviciul tfc", // tai frunza la caini
+    "unitate plus monitor",
+    "nu iti merge stickul",
+    "accesati resursele pe site",
+    "ai trimis tu mailuri"
 };
 
 const uint8_t dictionaryCount = sizeof(dictionary) / sizeof(dictionary[0]);
