@@ -21,7 +21,7 @@
 #define MAX_POINTS_PER_ROUND 10
 #define REACTION_CAP 1000
 
-#define points(r_time) (((1000 - r_time) * MAX_POINTS_PER_ROUND) / REACTION_CAP + 1)
+#define points(r_time) (((REACTION_CAP - r_time) * MAX_POINTS_PER_ROUND) / REACTION_CAP + 1)
 #define servo_pos(r_no) ((r_no * SERVO_MAX_DEG) / MAX_ROUNDS)
 
 // Game language constants

@@ -9,7 +9,6 @@ void initDisplay() {
 
 void displayScores(uint8_t p1, uint8_t p2) {
     lcd.clear();
-    lcd.setCursor(0, 0);
     lcd.print(P1_NAME);
 
     lcd.setCursor(LCD_COLS - sizeof(P2_NAME), 0);
@@ -28,6 +27,7 @@ void displayWinner(bool isFirstPlayer, uint8_t score) {
     lcd.print(" ");
     lcd.print(WINNER_MSG);
     lcd.setCursor(0, 1);
+    lcd.print(score);
 }
 
 void displayWelcomeMessage() {
@@ -35,4 +35,16 @@ void displayWelcomeMessage() {
     lcd.print(WELCOME_MSG);
     lcd.setCursor(0, 1);
     lcd.print(IDLE_MSG);
+}
+
+void displayRoundMessage(bool isFirstPlayer, uint8_t score) {
+    lcd.clear();
+    lcd.print(isFirstPlayer ? P1_NAME : P2_NAME);
+    lcd.setCursor(0, 1);
+    lcd.print(score);
+}
+
+void displayStartupMessage() {
+    lcd.clear();
+    lcd.print(STARTUP_MSG);
 }
