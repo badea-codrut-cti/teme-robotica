@@ -21,13 +21,19 @@ void displayScores(uint8_t p1, uint8_t p2) {
     lcd.print(p2);
 }
 
-void displayWinner(bool isFirstPlayer, uint8_t score) {
+void displayWinner(uint8_t scoreP1, uint8_t scoreP2) {
     lcd.clear();
+    if (scoreP1 == scoreP2) {
+        lcd.print(TIE_MSG);
+        return;
+    }
+
+    bool isFirstPlayer = scoreP1 > scoreP2;
     lcd.print(isFirstPlayer ? P1_NAME : P2_NAME);
     lcd.print(" ");
     lcd.print(WINNER_MSG);
     lcd.setCursor(0, 1);
-    lcd.print(score);
+    lcd.print(isFirstPlayer ? scoreP1 : scoreP2);
 }
 
 void displayWelcomeMessage() {

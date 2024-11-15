@@ -3,48 +3,54 @@
 #include <constants.h>
 #include <display.h>
 #include <spimaster.h>
+#include <spicom.h>
 
 Servo servo;
 
-uint8_t roundCount = 0, correctLed = 0, scoreP1 = 0, scoreP2 = 0;
+uint8_t roundCount = 0, correctLed = 0, scoreP1 = 0, scoreP2 = 0, lastServo = 0;
 uint16_t msCounter = 0;
 uint32_t lastMillis = 0;
-bool isFirstPlayer = false, isWaitingNewRound = false;
+bool isFirstPlayer = false, isWaitingNewRound = false, isWaitingGameEnd = false;
 
-
-void handleMainMenu() {
-    servo.write(0);
-    displayWelcomeMessage();
-}
 
 void waitForGameStart() {
-    if (roundCount > 0)
+    if (roundCount > 0 || isWaitingNewRound || isWaitingGameEnd)
         return;
     
-    uint8_t hasPressed = pollSlave();
+    uint8_t hasPressed = pollSlave() & LED_MASK;
+
     if (hasPressed == 0)
         return;
 
     scoreP1 = scoreP2 = 0;
+
+    // Starting a new round will swap the active player
+    // So that's why we start with the opposite player
     isFirstPlayer = false;
 
-    roundCount = 0;
+    displayStartupMessage();
+    sendRoundState(false, 0);
+
+    // This will trigger a round start after 3 seconds
     msCounter = 1;
     isWaitingNewRound = true;
-    displayStartupMessage();
 }
 
 void startNewRound() {
     isWaitingNewRound = false;
     roundCount++;
-    startRound(isFirstPlayer = !isFirstPlayer, correctLed = random(1, 4));
+    correctLed = random(1, 4);
+    sendRoundState(isFirstPlayer = !isFirstPlayer, correctLed);
+    displayRoundMessage(isFirstPlayer, isFirstPlayer ? scoreP1 : scoreP2);
     msCounter = 1;
     lastMillis = millis();
 }
 
 void handleCounter() {
-    if (msCounter == 0)
+    if (msCounter == 0) {
+        lastMillis = millis();
         return;
+    }
 
     uint32_t ms = millis();
     
@@ -54,8 +60,24 @@ void handleCounter() {
     }
 }
 
+void endRound() {
+    msCounter = 1;
+
+    sendRoundState(false, 0);
+    // The match has ended
+    if (roundCount >= MAX_ROUNDS) {
+        isWaitingGameEnd = true;
+        bool firstWinner = scoreP1 > scoreP2;
+        displayWinner(firstWinner, firstWinner ? scoreP1 : scoreP2);
+        return;
+    }
+    
+    isWaitingNewRound = true;
+    displayScores(scoreP1, scoreP2);
+}
+
 void handleRound() {
-    if (isWaitingNewRound)
+    if (roundCount == 0 || isWaitingNewRound || isWaitingGameEnd)
         return;
 
     if (msCounter > REACTION_CAP) {
@@ -63,10 +85,10 @@ void handleRound() {
         return;
     }
 
-    uint8_t pressed = pollSlave();
+    uint8_t pressed = pollSlave() & LED_MASK;
     if (pressed == 0) 
         return;
-    
+
     if (pressed == correctLed) {
         if (isFirstPlayer)
             scoreP1 += points(msCounter);
@@ -76,15 +98,10 @@ void handleRound() {
     endRound();
 }
 
-void endRound() {
-    msCounter = 1;
-    isWaitingNewRound = true;
-
-    displayScores(scoreP1, scoreP2);
-}
-
 void handleServo() {
-    servo.write(servo_pos(roundCount));
+    uint8_t newServo = servo_pos(roundCount);
+    if (newServo != lastServo)
+        servo.write(lastServo = newServo);
 }
 
 void waitForNewRound() {
@@ -97,20 +114,37 @@ void waitForNewRound() {
     startNewRound();
 }
 
+void handleEndScreen() {
+    if (!isWaitingGameEnd)
+        return;
+
+    if (msCounter < ROUND_RESTART_DELAY * 1000)
+        return;
+
+    msCounter = 0;
+    roundCount = 0;
+    isWaitingNewRound = isWaitingGameEnd = false;
+    sendRoundState(false, 0);
+    displayWelcomeMessage();
+}
+
 void setup() {
     servo.attach(SERVO_SIG);
     initDisplay();
     initSPI();
 
     randomSeed(analogRead(0));
+    servo.write(0);
 
-    handleMainMenu();
+    Serial.begin(9600);
+    displayWelcomeMessage();
 }
 
 void loop() {
-    waitForGameStart();
     handleCounter();
+    waitForGameStart();
     handleRound();
     handleServo();
     waitForNewRound();
+    handleEndScreen();
 }
