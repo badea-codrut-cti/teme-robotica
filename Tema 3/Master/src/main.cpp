@@ -7,7 +7,7 @@
 
 Servo servo;
 
-uint8_t roundCount = 0, correctLed = 0, scoreP1 = 0, scoreP2 = 0, lastServo = 0;
+uint8_t roundCount = 0, correctLed = 0, scoreP1 = 0, scoreP2 = 0;
 uint16_t msCounter = 0;
 uint32_t lastMillis = 0;
 bool isFirstPlayer = false, isWaitingNewRound = false, isWaitingGameEnd = false;
@@ -99,9 +99,7 @@ void handleRound() {
 }
 
 void handleServo() {
-    uint8_t newServo = servo_pos(roundCount);
-    if (newServo != lastServo)
-        servo.write(lastServo = newServo);
+    servo.write(servo_pos(roundCount));
 }
 
 void waitForNewRound() {

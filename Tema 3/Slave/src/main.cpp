@@ -86,8 +86,8 @@ void handleLED() {
 }
 
 void updateLastPressedButton() {
-  //if (lastButtonPressed != SHUT)
-  //  return;
+  if (lastButtonPressed != SHUT)
+    return;
 
   if (activePlayer == 0 || activePlayer == 1) {
     if (digitalRead(BTN0_P0_RED) == LOW) {

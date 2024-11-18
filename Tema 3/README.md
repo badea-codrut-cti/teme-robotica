@@ -1,63 +1,81 @@
-## Protocol over SPI
+## Quicktime
 
-### Master Protocol:
+### Componente utilizate
 
-```
-00000000
+Componenta|Cantitate
+---|---
+Arduino UNO|2
+Push Buttons|6
+Condensator 100 $\mu\text{F}$|1
+Servomotor|1
+LCD 16x2|1
+LED RGB|2
+LED Rosu|2
+LED Verde|2
+LED Albastru|2
 
-7 POLL - When it is on, it means that this is a request asking for status from the slave. The other pins should be off.
-6 PLAYER - Dictates which player is the active player.
-0-1 CORRECT_LED - 01 for red, 10 for green, 11 for blue. Can technically support up to 32 colors.
-```
 
-### Slave Protocol:
+### Protocolul de comunicatie
 
-```
-00000000
+#### Mesajele de la Master
 
-0-1 PRESSED_BTN - same as above, 00 meaning no button was pressed yet.
+Poll|Player|Unused|Led
+---|---|---|---
+0|0|0000|00
 
-Expected Behaviour:
- - The slave only keeps track of the last pressed button, active player and correct LED.
- - The slave will ignore button presses from the inactive player.
- - If the correct LED is set to 00, the round has ended and the LED is shut down.
- - The last pressed button resets to zero whenever a non-polling request is sent.
- - The slave only loops back non-polling data.
- - We will only register button presses if the last button pressed is zero.
-```
+- Poll - Daca acest bit are valoarea 1, master-ul intreaba arduino-ul slave daca un buton a fost apasat.
+- Player - Precizeaza jucatorul activ (0 fiind primul jucator, 1 fiind al doilea jucator).
+- Unused - Biti disponibili pentru expansiuni viitoare.
+- Led - Precizeaza culoarea LED-ului RGB care sa fie aprinsa:
+  - 00 insemnand LED oprit
+  - 01 insemnand rosu
+  - 10 insemnand verde
+  - 11 insemnand albastru
+
+
+#### Mesajele de la Slave
+
+Unused|Pressed
+---|---
+000000|00
+
+- Pressed: Precizeaza butonul care a fost apasat:
+  - 00 insemnand ca niciun buton nu a fost apasat inca.
+  - 01 insemnand ca butonul corespunzator LED-ului rosu a fost apasat.
+  - 10 insemnand ca butonul corespunzator LED-ului verde a fost apasat.
+  - 11 insemnand ca butonul corespunzator LED-ului albastru a fost apasat.
+
  
-### Example Communication:
+#### Exemplu de comunicare:
 
 ```
-Master: 00000011 // The master tells the slave that a new round started, player 1 is playing and the correct LED is blue.
-Slave : 00000011 // Looping back, signaling that we understood.
-Master: 10000000 // Asking what's up.
-Slave : 00000000 // Nothing yet, the player hasn't reacted.
-Master: 10000000 // Asking what's up again every ms.
-Slave : 00000000
-// Repeating this until the player reacted...
+Master: 00000011 // A inceput o runda noua, este randul primului jucator, LED-ul corect este albastru.
+Slave : 00000011 // Raspunde cu acelasi mesaj, sa confirme ca a inteles.
+Master: 10000000 // Polling.
+Slave : 00000000 // Momentan jucatorul nu a apasat niciun buton.
+Master: 10000000 // Polling iar.
+Slave : 00000000 // Samd.
+// Repetam secventa pana jucatorul apasa pe buton...
 Master: 10000000
-Slave : 00000011 // The player has pressed the button corresponding to the blue LED. 
-Master: 00000000 // We shut down the LEDs. The round is over.
-Slave : 00000000
-// We wait out the round restart delay on the master...
-Master: 01000010 // Now it's player 2's turn and the correct LED is green.
+Slave : 00000011 // Jucatorul a apasat pe butonul corespunzator LED-ului albastru.
+Master: 00000000 // Oprim LED-ul, runda s-a terminat.
+Slave : 00000000 
+// Nimic nu se transmite pana la inceputul rundei urmatoare...
+Master: 01000010 // Este randul celui de-al doilea jucator si LED-ul corect este verde.
 ```
 
-**Disclaimer: Do not check if the master message is equal to 0 to determine if the round is over. `0b01000000` is also valid.**
+#### Pornirea jocului
 
-### Starting the game
-
-The master will keep polling the slave until any of the buttons are pressed.
+Deoarece arduino-ul slave accepta apasari din partea ambilor jucatori cand LED-ul este oprit, dupa ce jocul s-a terminat putem da poll constant pentru a astepta inceperea jocului urmator.
 
 ```
-Master: 00000000 // The game ended, we shut off the LEDs
+Master: 00000000 // Jocul s-a terminat, inchidem LED-urile.
 Slave: 00000000 // Looping back.
-Master: 10000000 // Polling
+Master: 10000000 // Polling.
 Slave : 00000000
-// Repeating until button is pressed...
+// Repetam pana unul dintre butoane este apasat...
 Master: 10000000
-Slave: 00000010 // One of the players has pressed the green LED button. We should start the game.
-// We wait out the start countdown...
-Master: 00000001 // A new round has started
+Slave: 00000010 // Unul dintre jucatori a apasat butonul corespunzator LED-ului verde. Putem incepe jocul.
+// Asteptam inceperea jocului...
+Master: 00000001 // A inceput prima runda, este randul primului jucator si LED-ul corect este cel rosu. 
 ```
