@@ -123,7 +123,7 @@ Master: 00000001 // A inceput prima runda, este randul primului jucator si LED-u
 #### Timpul si Finalizarea Jocului  
 1. **Progresul jocului** este indicat de rotatia unui **servomotor**.  
    - Servomotorul se roteste continuu la terminarea fiecarei mutari. 
-   - $Increment pe runda = \dfrac{\text{SERVO\_MAX\_DEG}}{\text{MAX\_ROUNDS}}  = \dfrac{180^∘}{24} =7.5^∘ $
+   - $Increment pe runda = \dfrac{\text{SERVO\_MAX\_DEG}}{\text{MAX\_ROUNDS}} = \dfrac{180^\circ}{24} = 7.5^\circ$
    - O **rotatie completa** marcheaza **sfarsitul jocului**.  
 
 2. La finalul jocului:  
