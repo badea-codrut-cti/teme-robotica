@@ -21,6 +21,7 @@ void stopRound() {
 void sendRoundState(bool isFirstPlayer, uint8_t ledNumber) {
     ledNumber &= LED_MASK;
     spiTransfer((isFirstPlayer ? 0 : 1) << PLAYER_PIN | ledNumber);
+    Serial.println((isFirstPlayer ? 0 : 1) << PLAYER_PIN | ledNumber);
 }
 
 uint8_t pollSlave() {

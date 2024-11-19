@@ -67,8 +67,7 @@ void endRound() {
     // The match has ended
     if (roundCount >= MAX_ROUNDS) {
         isWaitingGameEnd = true;
-        bool firstWinner = scoreP1 > scoreP2;
-        displayWinner(firstWinner, firstWinner ? scoreP1 : scoreP2);
+        displayWinner(scoreP1, scoreP2);
         return;
     }
     
