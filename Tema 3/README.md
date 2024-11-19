@@ -135,10 +135,16 @@ Master: 00000001 // A inceput prima runda, este randul primului jucator si LED-u
 --- 
 
 ### Poze ale setup-ului fizic
-
-
+![image](https://github.com/user-attachments/assets/a366d728-da14-4029-ac7f-bd5348a0d77e)
+![image](https://github.com/user-attachments/assets/464fd63d-63dc-4d52-b29e-94356248b436)
 
 ### Video cu functionalitatea montajului fizic
 
+https://github.com/user-attachments/assets/8bdfc128-e127-4aa2-b691-9a5425a56d51
+
 
 ### Schema electrica
+
+![image](https://github.com/user-attachments/assets/a5df2825-a297-4857-a6e7-e3f354815a94)
+![image](https://github.com/user-attachments/assets/b9ad4b66-1c0e-46c4-b518-046a7dffc38c)
+
